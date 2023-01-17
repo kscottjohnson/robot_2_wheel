@@ -1,63 +1,51 @@
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
+#include <bluefruit.h>
 
 // Motor Driver Library
 Adafruit_MotorShield driver = Adafruit_MotorShield();
 
-// setup Motors
-Adafruit_DCMotor *lMotor = driver.getMotor(1);
-Adafruit_DCMotor *rMotor = driver.getMotor(2);
+// Motors
+Adafruit_DCMotor *lMotor, *rMotor;
+
+// BLE setup
+BLEDfu bledfu;
+BLEUart bleuart;
+
+// buttons
+bool buttons[] = { false, false, false, false, false, false, false, false, false };
+
+#define CLOCK_CYCLE 100
+unsigned long currentMs, prevMs;
 
 void setup() {
-  Serial.begin(9600);
-  Serial.println("Adafruit Motorshield v2 - DC Motor test!");
+  Serial.begin(115200);
+  while (!Serial) delay(10);
+  Serial.println("hello world!");
 
-  if (!driver.begin()) {
-    Serial.println("Could not find Motor Shield.");
-    while (1);
-  }
-  Serial.println("Motor Shield found.");
-  
-  lMotor->setSpeed(0);
-  rMotor->setSpeed(0);
+  //motor_setup();
+
+  bluefruit_setup();
+
+  prevMs = millis();
 }
 
 void loop() {
-  uint8_t i;
+  currentMs = millis();
+  if((currentMs - prevMs) < CLOCK_CYCLE) return;
+  prevMs = currentMs;
 
-  Serial.println("forward");
-  lMotor->run(FORWARD);
-  rMotor->run(FORWARD);
-  
-  for (i=0; i<255; i++) {
-    lMotor->setSpeed(i);
-    rMotor->setSpeed(i);
-    delay(10);
+  bluefruit_read();
 
+  //button check
+  for (uint8_t b = 1; b <= 8; b++) {
+    Serial.print(b);
+    if (buttons[b]) {
+      Serial.print("  on, ");
+    } else {
+      Serial.print(" off, ");
+    }
   }
-  for (i=255; i!=0; i--) {
-    lMotor->setSpeed(i);
-    rMotor->setSpeed(i);
-    delay(10);
-  }
-
-  Serial.println("backward");
-  lMotor->run(BACKWARD);
-  rMotor->run(BACKWARD);
-  for (i=0; i<255; i++) {
-    lMotor->setSpeed(i);
-    rMotor->setSpeed(i);
-    delay(10);
-  }
-  for (i=255; i!=0; i--) {
-    lMotor->setSpeed(i);
-    rMotor->setSpeed(i);
-    delay(10);
-  }
-
-  Serial.println("end");
-  lMotor->run(RELEASE);
-  rMotor->run(RELEASE);
-  delay(1000);
+  Serial.println();
 
 }
