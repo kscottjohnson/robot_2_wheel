@@ -5,7 +5,8 @@
 Adafruit_MotorShield driver = Adafruit_MotorShield();
 
 // setup Motors
-Adafruit_DCMotor *m1 = driver.getMotor(1);
+Adafruit_DCMotor *lMotor = driver.getMotor(1);
+Adafruit_DCMotor *rMotor = driver.getMotor(2);
 
 void setup() {
   Serial.begin(9600);
@@ -17,36 +18,46 @@ void setup() {
   }
   Serial.println("Motor Shield found.");
   
-  m1->setSpeed(0);
+  lMotor->setSpeed(0);
+  rMotor->setSpeed(0);
 }
 
 void loop() {
   uint8_t i;
 
-  Serial.print("forward");
-  m1->run(FORWARD);
+  Serial.println("forward");
+  lMotor->run(FORWARD);
+  rMotor->run(FORWARD);
+  
   for (i=0; i<255; i++) {
-    m1->setSpeed(i);
+    lMotor->setSpeed(i);
+    rMotor->setSpeed(i);
     delay(10);
+
   }
   for (i=255; i!=0; i--) {
-    m1->setSpeed(i);
+    lMotor->setSpeed(i);
+    rMotor->setSpeed(i);
     delay(10);
   }
 
-  Serial.print("backward");
-  m1->run(BACKWARD);
+  Serial.println("backward");
+  lMotor->run(BACKWARD);
+  rMotor->run(BACKWARD);
   for (i=0; i<255; i++) {
-    m1->setSpeed(i);
+    lMotor->setSpeed(i);
+    rMotor->setSpeed(i);
     delay(10);
   }
   for (i=255; i!=0; i--) {
-    m1->setSpeed(i);
+    lMotor->setSpeed(i);
+    rMotor->setSpeed(i);
     delay(10);
   }
 
-  Serial.print("end");
-  m1->run(RELEASE);
+  Serial.println("end");
+  lMotor->run(RELEASE);
+  rMotor->run(RELEASE);
   delay(1000);
 
 }
