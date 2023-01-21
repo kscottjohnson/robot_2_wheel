@@ -32,20 +32,33 @@ void setup() {
 
 void loop() {
   currentMs = millis();
-  if((currentMs - prevMs) < CLOCK_CYCLE) return;
+  if ((currentMs - prevMs) < CLOCK_CYCLE) return;
   prevMs = currentMs;
 
   bluefruit_read();
 
-  //button check
-  for (uint8_t b = 1; b <= 8; b++) {
-    Serial.print(b);
-    if (buttons[b]) {
-      Serial.print("  on, ");
-    } else {
-      Serial.print(" off, ");
-    }
+  if (buttons[4]) {  // boost
+    lMotor->setSpeed(200);
+    rMotor->setSpeed(200);
+  } else {
+    lMotor->setSpeed(50);
+    rMotor->setSpeed(50);
   }
-  Serial.println();
 
+  if (buttons[5]) {  // forward
+    lMotor->run(FORWARD);
+    rMotor->run(FORWARD);
+  } else if (buttons[6]) {  // backward
+    lMotor->run(BACKWARD);
+    rMotor->run(BACKWARD);
+  } else if (buttons[7]) {  // left
+    lMotor->run(BACKWARD);
+    rMotor->run(FORWARD);
+  } else if (buttons[8]) {  // right
+    rMotor->run(BACKWARD);
+    lMotor->run(FORWARD);
+  } else {  // stop
+    lMotor->run(RELEASE);
+    rMotor->run(RELEASE);
+  }
 }
