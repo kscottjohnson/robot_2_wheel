@@ -23,7 +23,7 @@ void setup() {
   while (!Serial) delay(10);
   Serial.println("hello world!");
 
-  //motor_setup();
+  motor_setup();
 
   bluefruit_setup();
 
